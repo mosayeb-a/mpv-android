@@ -3,6 +3,7 @@ package com.ma.mpv.app
 
 import android.app.Application
 import com.ma.mpv.feature.browser.FoldersViewModel
+import com.ma.mpv.feature.player.PlayerViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModel
@@ -14,6 +15,7 @@ class App : Application() {
 
         val appModule = module {
             viewModel { FoldersViewModel(contentResolver) }
+            viewModel { PlayerViewModel() }
         }
 
         startKoin {
