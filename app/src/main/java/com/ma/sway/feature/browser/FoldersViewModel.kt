@@ -23,7 +23,6 @@ data class FolderState(
     val isLoading: Boolean = true,
     val folders: List<VideoFolder> = emptyList(),
     val selectedFolder: VideoFolder? = null,
-    val error: String? = null
 )
 
 class FoldersViewModel(
@@ -39,9 +38,7 @@ class FoldersViewModel(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        folders = folders.mapIndexed { index, folder ->
-                            if (index == 0) folder.copy(name = "Internal Memory") else folder
-                        }
+                        folders = folders
                     )
                 }
             }
@@ -49,14 +46,10 @@ class FoldersViewModel(
     }
 
     fun selectFolder(folderName: String) {
-        _state.update {
-            it.copy(selectedFolder = it.folders.find { folder ->
-                folder.name == if (folderName == "Internal Memory" && it.folders.firstOrNull()?.name != folderName) {
-                    it.folders.firstOrNull()?.name ?: folderName
-                } else {
-                    folderName
-                }
-            })
+        _state.update { state ->
+            state.copy(
+                selectedFolder = state.folders.find { it.name == folderName }
+            )
         }
     }
 
@@ -90,11 +83,13 @@ class FoldersViewModel(
                 val duration = cursor.getLong(durationColumn)
                 val size = cursor.getLong(sizeColumn)
 
-                val uri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
+                val uri =
+                    ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
 
                 val file = File(path)
                 if (file.exists()) {
-                    val folderName = file.parentFile?.name ?: "Unknown"
+                    val folderName =
+                        if (file.parentFile?.name == "0") "Internal Memory" else file.parentFile?.name ?: "Unknown"
                     val video = Video(name, path, uri, duration, size)
                     videoMap.getOrPut(folderName) { mutableListOf() }.add(video)
                 }

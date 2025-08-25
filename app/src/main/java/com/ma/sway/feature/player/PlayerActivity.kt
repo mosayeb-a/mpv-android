@@ -7,19 +7,19 @@ import com.ma.sway.common.VIDEO_PATH_EXTRA_KEY
 import com.ma.sway.databinding.PlayerLayoutBinding
 
 class PlayerActivity : AppCompatActivity() {
-        private lateinit var binding: PlayerLayoutBinding
+
+    private val binding by lazy { PlayerLayoutBinding.inflate(layoutInflater) }
+    val player by lazy { binding.player }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = PlayerLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.player.initialize(filesDir.path, cacheDir.path)
         val videoPath = intent.getStringExtra(VIDEO_PATH_EXTRA_KEY)
-        videoPath?.let {
-            binding.player.playFile(it)
-        }
+        videoPath?.let { player.playFile(it) }
+
     }
 
     override fun onDestroy() {
