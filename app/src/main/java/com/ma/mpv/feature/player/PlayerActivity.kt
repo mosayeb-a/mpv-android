@@ -1,0 +1,29 @@
+package com.ma.mpv.feature.player
+
+import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import com.ma.mpv.common.VIDEO_PATH_EXTRA_KEY
+import com.ma.mpv.databinding.PlayerLayoutBinding
+
+class PlayerActivity : AppCompatActivity() {
+
+    private val binding by lazy { PlayerLayoutBinding.inflate(layoutInflater) }
+    val player by lazy { binding.player }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(binding.root)
+
+        binding.player.initialize(filesDir.path, cacheDir.path)
+        val videoPath = intent.getStringExtra(VIDEO_PATH_EXTRA_KEY)
+        videoPath?.let { player.playFile(it) }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.player.destroy()
+    }
+}

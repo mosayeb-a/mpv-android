@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ma.sway"
+    namespace = "com.ma.mpv"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.ma.sway"
+        applicationId = "com.ma.mpv"
         minSdk = 21
         targetSdk = 36
         versionCode = 1
