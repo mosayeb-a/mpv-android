@@ -20,6 +20,12 @@ class PlayerViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _controlsShown = MutableStateFlow(true)
+    val controlsShown: StateFlow<Boolean> = _controlsShown.asStateFlow()
+
+    fun showControls() = _controlsShown.update { true }
+
+    fun hideControls() = _controlsShown.update { false }
 
     fun updatePlayingState(value: Boolean) {
         _isPlaying.update { value }

@@ -46,6 +46,7 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 val duration by viewModel.duration.collectAsStateWithLifecycle()
                 val position by viewModel.position.collectAsStateWithLifecycle()
                 val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+                val controlsShown by viewModel.controlsShown.collectAsStateWithLifecycle()
 
                 PlayerControllers(
                     modifier = Modifier.navigationBarsPadding(),
@@ -53,12 +54,16 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     duration = duration,
                     position = position,
                     isLoading = isLoading,
+                    controlsShown = controlsShown,
                     onPlayPauseToggle = { togglePlayPause() },
                     onSeekTo = { progress ->
                         val newPosition = (progress * duration).toLong()
                         seekTo(newPosition)
                         viewModel.updatePosition(newPosition)
                     },
+                    onToggleControls = {
+                        if (controlsShown) viewModel.hideControls() else viewModel.showControls()
+                    }
                 )
             }
         }
@@ -80,17 +85,9 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
 
     override fun eventProperty(property: String, value: Boolean) {
         when (property) {
-            "pause" -> {
-                viewModel.updatePlayingState(!value)
-            }
-
-            "paused-for-cache" -> {
-                viewModel.updateLoadingState(value)
-            }
-
-            "seeking" -> {
-                viewModel.updateLoadingState(value)
-            }
+            "pause" -> viewModel.updatePlayingState(!value)
+            "paused-for-cache" -> viewModel.updateLoadingState(value)
+            "seeking" -> viewModel.updateLoadingState(value)
         }
     }
 
