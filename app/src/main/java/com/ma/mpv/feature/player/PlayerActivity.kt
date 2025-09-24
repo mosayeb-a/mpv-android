@@ -42,19 +42,23 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
 
         binding.controls.setContent {
             MpvTheme {
-                val state by viewModel.playerState.collectAsStateWithLifecycle()
+                val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+                val duration by viewModel.duration.collectAsStateWithLifecycle()
+                val position by viewModel.position.collectAsStateWithLifecycle()
+                val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+
                 PlayerControllers(
                     modifier = Modifier.navigationBarsPadding(),
-                    isPlaying = state.isPlaying,
-                    duration = state.duration,
-                    position = state.position,
-                    isLoading = state.isLoading,
+                    isPlaying = isPlaying,
+                    duration = duration,
+                    position = position,
+                    isLoading = isLoading,
                     onPlayPauseToggle = { togglePlayPause() },
                     onSeekTo = { progress ->
-                        val newPosition = (progress * state.duration).toLong()
+                        val newPosition = (progress * duration).toLong()
                         seekTo(newPosition)
                         viewModel.updatePosition(newPosition)
-                    }
+                    },
                 )
             }
         }

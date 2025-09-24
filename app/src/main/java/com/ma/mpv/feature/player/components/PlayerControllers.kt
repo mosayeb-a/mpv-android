@@ -24,7 +24,7 @@ fun PlayerControllers(
     position: Long,
     isLoading: Boolean,
     onPlayPauseToggle: () -> Unit,
-    onSeekTo: (Float) -> Unit
+    onSeekTo: (Float) -> Unit,
 ) {
     Box(
         modifier = modifier

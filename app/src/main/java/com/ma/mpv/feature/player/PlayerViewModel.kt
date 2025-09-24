@@ -1,46 +1,41 @@
 package com.ma.mpv.feature.player
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-
-data class PlayerState(
-    val isPlaying: Boolean = false,
-    val duration: Long = 0L,
-    val position: Long = 0L,
-    val isLoading: Boolean = true
-)
 
 class PlayerViewModel : ViewModel() {
-    private val _playerState = MutableStateFlow(PlayerState())
-    val playerState: StateFlow<PlayerState> = _playerState
 
-    fun updateLoadingState(isLoading: Boolean) {
-        viewModelScope.launch {
-            _playerState.update {
-                it.copy(isLoading = isLoading)
-            }
-        }
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
+
+    private val _duration = MutableStateFlow(0L)
+    val duration: StateFlow<Long> = _duration.asStateFlow()
+
+    private val _position = MutableStateFlow(0L)
+    val position: StateFlow<Long> = _position.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+
+    fun updatePlayingState(value: Boolean) {
+        _isPlaying.update { value }
     }
 
-    fun updatePlayingState(isPlaying: Boolean) {
-        _playerState.update {
-            it.copy(isPlaying = isPlaying)
-        }
+    fun updateDuration(value: Long) {
+        _duration.update { value }
+        _position.update { pos -> pos.coerceIn(0L, value) }
     }
 
-    fun updatePosition(position: Long) {
-        _playerState.update {
-            it.copy(position = position.coerceIn(0L, it.duration))
-        }
+    fun updatePosition(value: Long) {
+        val currentDuration = _duration.value
+        _position.update { value.coerceIn(0L, currentDuration) }
     }
 
-    fun updateDuration(duration: Long) {
-        _playerState.update {
-            it.copy(duration = duration)
-        }
+    fun updateLoadingState(value: Boolean) {
+        _isLoading.update { value }
     }
 }
