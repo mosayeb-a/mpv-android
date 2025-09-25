@@ -2,6 +2,7 @@ package com.ma.mpv.app
 
 
 import android.app.Application
+import androidx.lifecycle.SavedStateHandle
 import com.ma.mpv.feature.browser.FoldersViewModel
 import com.ma.mpv.feature.player.PlayerViewModel
 import org.koin.android.ext.koin.androidContext
@@ -15,7 +16,9 @@ class App : Application() {
 
         val appModule = module {
             viewModel { FoldersViewModel(contentResolver) }
-            viewModel { PlayerViewModel() }
+            viewModel { (state: SavedStateHandle) ->
+                PlayerViewModel(state)
+            }
         }
 
         startKoin {

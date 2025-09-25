@@ -1,3 +1,4 @@
 package com.ma.mpv.common
 
-const val VIDEO_PATH_EXTRA_KEY = "video_path"
+const val VIDEO_LIST_KEY = "video_list"
+const val START_INDEX_KEY = "current_index"

@@ -6,10 +6,10 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ma.mpv.common.VIDEO_PATH_EXTRA_KEY
 import com.ma.mpv.common.ui.theme.MpvTheme
 import com.ma.mpv.databinding.PlayerLayoutBinding
 import com.ma.mpv.feature.player.components.PlayerControllers
@@ -37,8 +37,6 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
 
         player.initialize(filesDir.path, cacheDir.path)
         player.addObserver(this)
-        player.playFile(intent.getStringExtra(VIDEO_PATH_EXTRA_KEY)!!)
-        viewModel.updateLoadingState(false)
 
         binding.controls.setContent {
             MpvTheme {
@@ -47,6 +45,13 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 val position by viewModel.position.collectAsStateWithLifecycle()
                 val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
                 val controlsShown by viewModel.controlsShown.collectAsStateWithLifecycle()
+                val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
+
+                LaunchedEffect(currentVideo) {
+                    currentVideo?.let { path ->
+                        MPVLib.command(arrayOf("loadfile", path, "replace"))
+                    }
+                }
 
                 PlayerControllers(
                     modifier = Modifier.navigationBarsPadding(),
@@ -63,7 +68,9 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     },
                     onToggleControls = {
                         if (controlsShown) viewModel.hideControls() else viewModel.showControls()
-                    }
+                    },
+                    onNext = { viewModel.playNext() },
+                    onPrevious = { viewModel.playPrevious() }
                 )
             }
         }
@@ -105,7 +112,6 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
     }
 
     override fun eventProperty(property: String, value: String) {}
-
     override fun eventProperty(property: String) {}
 
     override fun event(eventId: Int) {

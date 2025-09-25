@@ -1,12 +1,27 @@
 package com.ma.mpv.feature.player
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.ma.mpv.common.START_INDEX_KEY
+import com.ma.mpv.common.VIDEO_LIST_KEY
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class PlayerViewModel : ViewModel() {
+class PlayerViewModel(
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
+
+    private val videoPaths: List<String> =
+        savedStateHandle.get<ArrayList<String>>(VIDEO_LIST_KEY) ?: emptyList()
+
+    private var currentIndex: Int =
+        (savedStateHandle.get<Int>(START_INDEX_KEY) ?: 0)
+            .coerceIn(0, videoPaths.size - 1)
+
+    private val _currentVideo = MutableStateFlow(videoPaths.getOrNull(currentIndex))
+    val currentVideo: StateFlow<String?> = _currentVideo.asStateFlow()
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
@@ -24,12 +39,8 @@ class PlayerViewModel : ViewModel() {
     val controlsShown: StateFlow<Boolean> = _controlsShown.asStateFlow()
 
     fun showControls() = _controlsShown.update { true }
-
     fun hideControls() = _controlsShown.update { false }
-
-    fun updatePlayingState(value: Boolean) {
-        _isPlaying.update { value }
-    }
+    fun updatePlayingState(value: Boolean) = _isPlaying.update { value }
 
     fun updateDuration(value: Long) {
         _duration.update { value }
@@ -37,11 +48,30 @@ class PlayerViewModel : ViewModel() {
     }
 
     fun updatePosition(value: Long) {
-        val currentDuration = _duration.value
-        _position.update { value.coerceIn(0L, currentDuration) }
+        _position.update { value.coerceIn(0L, _duration.value) }
     }
 
-    fun updateLoadingState(value: Boolean) {
-        _isLoading.update { value }
+    fun updateLoadingState(value: Boolean) = _isLoading.update { value }
+
+    fun playPrevious() {
+        if (currentIndex > 0) {
+            currentIndex--
+            _currentVideo.update { videoPaths[currentIndex] }
+            resetPlaybackState()
+        }
+    }
+
+    fun playNext() {
+        if (currentIndex < videoPaths.lastIndex) {
+            currentIndex++
+            _currentVideo.update { videoPaths[currentIndex] }
+            resetPlaybackState()
+        }
+    }
+
+    private fun resetPlaybackState() {
+        _isLoading.update { true }
+        _position.update { 0L }
+        _duration.update { 0L }
     }
 }
