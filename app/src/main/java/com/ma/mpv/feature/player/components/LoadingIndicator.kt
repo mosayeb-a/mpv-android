@@ -23,7 +23,7 @@ fun LoadingIndicator(modifier: Modifier = Modifier) {
         CircularProgressIndicator(
             modifier = Modifier.size(38.dp),
             color = Color.White,
-            strokeWidth = 5.dp
+            strokeWidth = 4.dp
         )
     }
 }

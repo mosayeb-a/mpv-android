@@ -1,6 +1,7 @@
 package com.ma.mpv.app
 
 import android.Manifest
+import android.content.Intent
 import android.graphics.Color.TRANSPARENT
 import android.os.Build
 import android.os.Bundle
@@ -9,8 +10,11 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import com.ma.mpv.common.START_INDEX_KEY
+import com.ma.mpv.common.VIDEO_LIST_KEY
 import com.ma.mpv.common.ui.theme.MpvTheme
 import com.ma.mpv.feature.browser.FoldersViewModel
+import com.ma.mpv.feature.player.PlayerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {

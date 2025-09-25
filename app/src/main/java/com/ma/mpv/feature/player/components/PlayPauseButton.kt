@@ -1,6 +1,5 @@
 package com.ma.mpv.feature.player.components
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -33,16 +32,9 @@ fun PlayPauseButton(
         animationSpec = tween(durationMillis = 200),
         label = "playPauseScale"
     )
-
-    val iconColor by animateColorAsState(
-        targetValue = if (isPlaying) Color.White else Color.LightGray,
-        animationSpec = tween(durationMillis = 100),
-        label = "iconColor"
-    )
-
     Box(
         modifier = modifier
-            .size(62.dp)
+            .size(58.dp)
             .clip(CircleShape)
             .background(Black.copy(alpha = 0.7f))
             .clickable { onPlayPauseToggle() },
@@ -51,9 +43,9 @@ fun PlayPauseButton(
         Icon(
             imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
             contentDescription = if (isPlaying) "Pause" else "Play",
-            tint = iconColor,
+            tint = Color.White,
             modifier = Modifier
-                .size(36.dp)
+                .size(34.dp)
                 .scale(scale)
         )
     }

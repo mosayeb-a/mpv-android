@@ -1,6 +1,5 @@
 package com.ma.mpv.feature.player.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,14 +24,20 @@ fun SeekBarWithDuration(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        Text(
+            text = formatTime(position),
+            color = Color.White,
+            style = MaterialTheme.typography.labelLarge,
+        )
+
+        Spacer(Modifier.width(6.dp))
+
         Slider(
             modifier = Modifier
-                .weight(0.8f)
+                .weight(1f)
                 .scale(1f, 0.8f),
             value = if (duration > 0) position.toFloat() / duration.toFloat() else 0f,
             onValueChange = onSeekTo,
@@ -43,10 +48,11 @@ fun SeekBarWithDuration(
                 inactiveTrackColor = Color.White.copy(alpha = 0.6f)
             )
         )
+
         Spacer(Modifier.width(6.dp))
 
         Text(
-            text = "${formatTime(position)} / ${formatTime(duration)}",
+            text = formatTime(duration),
             color = Color.White,
             style = MaterialTheme.typography.labelLarge,
         )
