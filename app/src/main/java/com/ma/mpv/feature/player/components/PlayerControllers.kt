@@ -8,8 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,6 +34,7 @@ fun PlayerControllers(
     onNext: () -> Unit,
     currentVideo: String?,
     onBack: () -> Unit,
+    onRotationClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -43,11 +46,17 @@ fun PlayerControllers(
             enter = fadeIn(animationSpec = tween(200)),
             exit = fadeOut(animationSpec = tween(200))
         ) {
-            TopBarControllers(
-                modifier = Modifier.align(Alignment.TopCenter),
-                currentVideoPath = currentVideo,
-                onBack = onBack
-            )
+            Column(modifier = Modifier.align(Alignment.TopCenter)) {
+                TopBarControllers(
+                    currentVideoPath = currentVideo,
+                    onBack = onBack
+                )
+                Spacer(Modifier.height(22.dp))
+
+                PlayerActions(
+                    onRotationClick = onRotationClick
+                )
+            }
         }
 
         AnimatedVisibility(

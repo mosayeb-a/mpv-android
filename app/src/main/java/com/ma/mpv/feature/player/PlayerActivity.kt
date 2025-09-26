@@ -1,5 +1,6 @@
 package com.ma.mpv.feature.player
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
@@ -88,7 +89,8 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     onNext = { viewModel.playNext() },
                     onPrevious = { viewModel.playPrevious() },
                     currentVideo = currentVideo,
-                    onBack = { finish() }
+                    onBack = { finish() },
+                    onRotationClick = { cycleOrientation() }
                 )
             }
         }
@@ -106,6 +108,13 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
 
     private fun seekTo(positionMs: Long) {
         player.timePos = positionMs / 1000.0
+    }
+
+    private fun cycleOrientation() {
+        requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+        else
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
     override fun eventProperty(property: String, value: Boolean) {
