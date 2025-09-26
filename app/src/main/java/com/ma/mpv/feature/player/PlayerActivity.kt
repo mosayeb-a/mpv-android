@@ -9,7 +9,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ma.mpv.common.ui.theme.Black
 import com.ma.mpv.common.ui.theme.MpvTheme
 import com.ma.mpv.databinding.PlayerLayoutBinding
 import com.ma.mpv.feature.player.components.PlayerControllers
@@ -28,7 +33,7 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 android.graphics.Color.TRANSPARENT
             ),
             navigationBarStyle = SystemBarStyle.dark(
-                android.graphics.Color.TRANSPARENT
+                Black.copy(alpha = 0.5f).toArgb()
             )
         )
         setContentView(binding.root)
@@ -44,6 +49,19 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
                 val controlsShown by viewModel.controlsShown.collectAsStateWithLifecycle()
                 val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
+
+                LaunchedEffect(controlsShown) {
+                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+
+                    if (controlsShown) {
+                        insetsController.show(WindowInsetsCompat.Type.systemBars())
+                        insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+                    } else {
+                        insetsController.hide(WindowInsetsCompat.Type.systemBars())
+                        insetsController.systemBarsBehavior =
+                            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    }
+                }
 
                 LaunchedEffect(currentVideo) {
                     currentVideo?.let { path ->

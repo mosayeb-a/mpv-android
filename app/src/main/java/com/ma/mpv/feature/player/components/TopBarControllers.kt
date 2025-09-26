@@ -34,7 +34,7 @@ import com.ma.mpv.common.ui.theme.Black
 import java.io.File
 
 @Composable
-fun TopBarController(
+fun TopBarControllers(
     modifier: Modifier = Modifier,
     currentVideoPath: String?,
     onBack: () -> Unit,
@@ -51,16 +51,10 @@ fun TopBarController(
             .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-            contentDescription = "Back",
-            tint = Color.White,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Black.copy(alpha = 0.6f))
-                .clickable { onBack() }
-                .padding(8.dp)
+        TopBarIcon(
+            icon = Icons.AutoMirrored.Rounded.ArrowBack,
+            description = "Back",
+            onClick = onBack
         )
 
         Text(
