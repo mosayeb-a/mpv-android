@@ -24,13 +24,11 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
-                android.graphics.Color.TRANSPARENT,
+            statusBarStyle = SystemBarStyle.dark(
                 android.graphics.Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
-                scrim = android.graphics.Color.TRANSPARENT,
-                darkScrim = android.graphics.Color.TRANSPARENT
+            navigationBarStyle = SystemBarStyle.dark(
+                android.graphics.Color.TRANSPARENT
             )
         )
         setContentView(binding.root)
@@ -70,7 +68,9 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                         if (controlsShown) viewModel.hideControls() else viewModel.showControls()
                     },
                     onNext = { viewModel.playNext() },
-                    onPrevious = { viewModel.playPrevious() }
+                    onPrevious = { viewModel.playPrevious() },
+                    currentVideo = currentVideo,
+                    onBack = { finish() }
                 )
             }
         }

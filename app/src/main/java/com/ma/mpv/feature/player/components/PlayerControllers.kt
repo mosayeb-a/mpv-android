@@ -27,14 +27,27 @@ fun PlayerControllers(
     onSeekTo: (Float) -> Unit,
     onToggleControls: () -> Unit,
     onPrevious: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    currentVideo: String?,
+    onBack: () -> Unit,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .clickable { onToggleControls() }
-            .padding(16.dp)
     ) {
+        AnimatedVisibility(
+            visible = controlsShown,
+            enter = fadeIn(animationSpec = tween(200)),
+            exit = fadeOut(animationSpec = tween(200))
+        ) {
+            TopBarController(
+                modifier = Modifier.align(Alignment.TopCenter),
+                currentVideoPath = currentVideo,
+                onBack = onBack
+            )
+        }
+
         AnimatedVisibility(
             visible = controlsShown,
             enter = fadeIn(animationSpec = tween(200)),
