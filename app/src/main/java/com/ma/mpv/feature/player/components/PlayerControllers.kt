@@ -63,16 +63,14 @@ fun PlayerControllers(
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .background(Black.copy(alpha = 0.5f))
-                    ,
+                        .padding(horizontal = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     SeekBarWithDuration(
                         duration = duration,
                         position = position,
                         onSeekTo = onSeekTo,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth()
                     )
                     PlaybackButtons(
                         isPlaying = isPlaying,
