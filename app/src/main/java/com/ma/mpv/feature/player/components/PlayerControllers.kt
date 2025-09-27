@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,6 +32,7 @@ fun PlayerControllers(
     position: Long,
     isLoading: Boolean,
     controlsShown: Boolean,
+    isLocked: Boolean,
     onPlayPauseToggle: () -> Unit,
     onSeekTo: (Float) -> Unit,
     onToggleControls: () -> Unit,
@@ -37,17 +42,29 @@ fun PlayerControllers(
     onBack: () -> Unit,
     onRotationClick: () -> Unit,
     onAspectRatioClick: () -> Unit,
+    onLockClick: () -> Unit,
     aspectRatio: VideoAspect,
 ) {
+    var showLock by remember { mutableStateOf(isLocked) }
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .clickable { onToggleControls() }
+            .clickable(
+                enabled = true,
+                onClick = {
+                    if (isLocked) {
+                        showLock = true
+                    } else {
+                        onToggleControls()
+                    }
+                }
+            )
     ) {
         AspectRatioOverlay(aspectRatio = aspectRatio)
 
         AnimatedVisibility(
-            visible = controlsShown,
+            visible = controlsShown && !isLocked,
             enter = fadeIn(animationSpec = tween(200)),
             exit = fadeOut(animationSpec = tween(200))
         ) {
@@ -65,7 +82,7 @@ fun PlayerControllers(
         }
 
         AnimatedVisibility(
-            visible = controlsShown,
+            visible = controlsShown && !isLocked,
             enter = fadeIn(animationSpec = tween(200)),
             exit = fadeOut(animationSpec = tween(200))
         ) {
@@ -92,10 +109,27 @@ fun PlayerControllers(
                         onPrevious = onPrevious,
                         onNext = onNext,
                         onAspectRatioClick = onAspectRatioClick,
-                        onLockClick = {},
+                        onLockClick = onLockClick,
                         aspectRatio = aspectRatio
                     )
                 }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showLock && isLocked,
+            enter = fadeIn(animationSpec = tween(200)),
+            exit = fadeOut(animationSpec = tween(200))
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LockControl(
+                    isLocked = isLocked,
+                    onShowLockChange = { showLock = it },
+                    onLockClick = onLockClick
+                )
             }
         }
 

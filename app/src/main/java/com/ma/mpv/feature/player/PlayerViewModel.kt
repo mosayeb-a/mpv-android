@@ -44,6 +44,9 @@ class PlayerViewModel(
     private val _currentAspect = MutableStateFlow(VideoAspect.Original)
     val currentAspect: StateFlow<VideoAspect> = _currentAspect.asStateFlow()
 
+    private val _isLocked = MutableStateFlow(false)
+    val isLocked: StateFlow<Boolean> = _isLocked.asStateFlow()
+
     private var aspectRatioIndex = 0
 
     fun cycleAspectRatio(screenAspectRatio: Double) {
@@ -52,6 +55,8 @@ class PlayerViewModel(
         _currentAspect.value = newAspect
         changeVideoAspect(newAspect, screenAspectRatio)
     }
+
+    fun toggleLock() = _isLocked.update { !it }
 
     private fun changeVideoAspect(aspect: VideoAspect, screenAspectRatio: Double) {
         var ratio = -1.0

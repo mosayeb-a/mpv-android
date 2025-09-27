@@ -52,6 +52,7 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 val controlsShown by viewModel.controlsShown.collectAsStateWithLifecycle()
                 val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
                 val currentAspect by viewModel.currentAspect.collectAsStateWithLifecycle()
+                val isLocked by viewModel.isLocked.collectAsStateWithLifecycle()
 
                 LaunchedEffect(controlsShown) {
                     val insetsController =
@@ -81,6 +82,7 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     position = position,
                     isLoading = isLoading,
                     controlsShown = controlsShown,
+                    isLocked = isLocked,
                     onPlayPauseToggle = { togglePlayPause() },
                     onSeekTo = { progress ->
                         val newPosition = (progress * duration).toLong()
@@ -96,6 +98,7 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     onBack = { finish() },
                     onRotationClick = { cycleOrientation() },
                     onAspectRatioClick = { viewModel.cycleAspectRatio(getScreenAspectRatio()) },
+                    onLockClick = { viewModel.toggleLock() },
                     aspectRatio = currentAspect,
                 )
             }
