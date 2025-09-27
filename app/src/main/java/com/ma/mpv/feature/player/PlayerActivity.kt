@@ -53,6 +53,7 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
                 val currentAspect by viewModel.currentAspect.collectAsStateWithLifecycle()
                 val isLocked by viewModel.isLocked.collectAsStateWithLifecycle()
+                val currentSpeed by viewModel.playbackSpeed.collectAsStateWithLifecycle()
 
                 LaunchedEffect(controlsShown) {
                     val insetsController =
@@ -99,7 +100,12 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     onRotationClick = { cycleOrientation() },
                     onAspectRatioClick = { viewModel.cycleAspectRatio(getScreenAspectRatio()) },
                     onLockClick = { viewModel.toggleLock() },
-                    aspectRatio = currentAspect,
+                    onSpeedChange = { speed ->
+                        MPVLib.setPropertyDouble("speed", speed.toDouble())
+                        viewModel.updatePlaybackSpeed(speed)
+                    },
+                    currentSpeed = currentSpeed,
+                    aspectRatio = currentAspect
                 )
             }
         }
@@ -149,8 +155,9 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
     }
 
     override fun eventProperty(property: String, value: Double) {
-        if (property == "duration/full") {
-            viewModel.updateDuration((value * 1000).toLong())
+        when (property) {
+            "duration/full" -> viewModel.updateDuration((value * 1000).toLong())
+            "speed" -> viewModel.updatePlaybackSpeed(value.toFloat())
         }
     }
 

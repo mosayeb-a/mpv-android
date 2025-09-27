@@ -3,6 +3,8 @@ package com.ma.mpv.feature.player.components
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.VolumeMute
+import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.ScreenRotation
 import androidx.compose.material3.Icon
@@ -13,15 +15,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.Locale
 
 @Composable
 fun PlayerActions(
     modifier: Modifier = Modifier,
-    onRotationClick: () -> Unit
+    onRotationClick: () -> Unit,
+    onMuteClick: () -> Unit,
+    onSpeedClick: () -> Unit,
+    speed: Float,
 ) {
     LazyRow(
         modifier = modifier
     ) {
+        item {
+            ActionButton(
+                icon = {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = Icons.AutoMirrored.Rounded.VolumeMute,
+                        contentDescription = "Mute",
+                        tint = Color.White
+                    )
+                },
+                label = "Mute",
+                onClick = onMuteClick
+            )
+        }
+
         item {
             ActionButton(
                 icon = {
@@ -40,10 +61,19 @@ fun PlayerActions(
         item {
             ActionButton(
                 icon = {
-                    Text("1X", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = if (speed % 1.0f == 0f) {
+                            "${speed.toInt()}X"
+                        } else {
+                            "${String.format(Locale.US, "%.2f", speed)}X"
+                        },
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.W800
+                    )
                 },
                 label = "Speed",
-                onClick = {}
+                onClick = onSpeedClick
             )
         }
 

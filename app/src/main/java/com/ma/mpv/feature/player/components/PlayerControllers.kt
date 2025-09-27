@@ -47,9 +47,12 @@ fun PlayerControllers(
     onRotationClick: () -> Unit,
     onAspectRatioClick: () -> Unit,
     onLockClick: () -> Unit,
+    onSpeedChange: (Float) -> Unit,
+    currentSpeed: Float = 1.0f,
     aspectRatio: VideoAspect,
 ) {
     var showLock by remember { mutableStateOf(isLocked) }
+    var showSpeedOverlay by remember { mutableStateOf(false) }
 
     CompositionLocalProvider(LocalRippleConfiguration provides playerRippleConfiguration) {
         Box(
@@ -62,7 +65,14 @@ fun PlayerControllers(
                         if (isLocked) {
                             showLock = true
                         } else {
-                            onToggleControls()
+                            if (showSpeedOverlay) {
+                                showSpeedOverlay = false
+                                if (!controlsShown) {
+                                    onToggleControls()
+                                }
+                            } else {
+                                onToggleControls()
+                            }
                         }
                     }
                 )
@@ -70,7 +80,28 @@ fun PlayerControllers(
             AspectRatioOverlay(aspectRatio = aspectRatio)
 
             AnimatedVisibility(
-                visible = controlsShown && !isLocked,
+                visible = showSpeedOverlay && !isLocked,
+                enter = fadeIn(animationSpec = tween(200)),
+                exit = fadeOut(animationSpec = tween(200))
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    SpeedOverlay(
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {},
+                        onSpeedChange = onSpeedChange,
+                        initialSpeed = currentSpeed
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = controlsShown && !isLocked && !showSpeedOverlay,
                 enter = fadeIn(animationSpec = tween(200)),
                 exit = fadeOut(animationSpec = tween(200))
             ) {
@@ -82,13 +113,16 @@ fun PlayerControllers(
                     Spacer(Modifier.height(22.dp))
 
                     PlayerActions(
-                        onRotationClick = onRotationClick
+                        onRotationClick = onRotationClick,
+                        onMuteClick = {},
+                        onSpeedClick = { showSpeedOverlay = true },
+                        speed = currentSpeed
                     )
                 }
             }
 
             AnimatedVisibility(
-                visible = controlsShown && !isLocked,
+                visible = controlsShown && !isLocked && !showSpeedOverlay,
                 enter = fadeIn(animationSpec = tween(200)),
                 exit = fadeOut(animationSpec = tween(200))
             ) {
