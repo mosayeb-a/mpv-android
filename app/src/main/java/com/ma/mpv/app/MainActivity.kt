@@ -41,29 +41,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             MpvTheme {
                 AppNavigation(viewModel = viewModel)
-                val videoList = arrayListOf(
-                    "/storage/emulated/0/algorithem/13.mp4",
-                    "/storage/emulated/0/algorithem/14.mp4",
-                    "/storage/emulated/0/algorithem/15.mp4",
-                    "/storage/emulated/0/algorithem/16.mp4",
-                    "/storage/emulated/0/algorithem/17.mp4",
-                    "/storage/emulated/0/algorithem/طراحی الگوریتم (جلسه ۱۷) رویکرد حریصانه در توسعه الگوری.mp4",
-                    "/storage/emulated/0/algorithem/طراحی الگوریتم (جلسه ۱۸) رویکرد عقبگرد در توسعه الگوریت.mp4",
-                    "/storage/emulated/0/algorithem/طراحی الگوریتم (جلسه ۱۹) رویکرد عقبگرد در توسعه الگوریت.mp4",
-                    "/storage/emulated/0/algorithem/طراحی الگوریتم (جلسه ۲۰) رویکرد عقبگرد در توسعه الگوریت.mp4",
-                    "/storage/emulated/0/algorithem/طراحی الگوریتم (جلسه ۲۱) رویکرد شاخه و حد در توسعه الگور.mp4",
-                    "/storage/emulated/0/algorithem/طراحی الگوریتم (جلسه ۲۲) رویکرد شاخه و حد در توسعه الگور.mp4"
-                )
-
-                val startIndex = 5
-
-                val intent = Intent(this , PlayerActivity::class.java).apply {
-                    putStringArrayListExtra(VIDEO_LIST_KEY, videoList)
-                    putExtra(START_INDEX_KEY, startIndex)
-                }
-
-                this.startActivity(intent)
-
             }
         }
 
