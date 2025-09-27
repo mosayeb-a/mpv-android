@@ -2,6 +2,7 @@ package com.ma.mpv.feature.player
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -50,13 +51,16 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
                 val controlsShown by viewModel.controlsShown.collectAsStateWithLifecycle()
                 val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
+                val currentAspect by viewModel.currentAspect.collectAsStateWithLifecycle()
 
                 LaunchedEffect(controlsShown) {
-                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+                    val insetsController =
+                        WindowCompat.getInsetsController(window, window.decorView)
 
                     if (controlsShown) {
                         insetsController.show(WindowInsetsCompat.Type.systemBars())
-                        insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+                        insetsController.systemBarsBehavior =
+                            WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
                     } else {
                         insetsController.hide(WindowInsetsCompat.Type.systemBars())
                         insetsController.systemBarsBehavior =
@@ -90,7 +94,9 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     onPrevious = { viewModel.playPrevious() },
                     currentVideo = currentVideo,
                     onBack = { finish() },
-                    onRotationClick = { cycleOrientation() }
+                    onRotationClick = { cycleOrientation() },
+                    onAspectRatioClick = { viewModel.cycleAspectRatio(getScreenAspectRatio()) },
+                    aspectRatio = currentAspect,
                 )
             }
         }
@@ -111,10 +117,17 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
     }
 
     private fun cycleOrientation() {
-        requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-        else
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        requestedOrientation =
+            if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            else
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+    }
+
+    fun getScreenAspectRatio(): Double {
+        val dm = DisplayMetrics()
+        windowManager.defaultDisplay.getRealMetrics(dm)
+        return dm.widthPixels / dm.heightPixels.toDouble()
     }
 
     override fun eventProperty(property: String, value: Boolean) {

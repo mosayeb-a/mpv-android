@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.ma.mpv.common.START_INDEX_KEY
 import com.ma.mpv.common.VIDEO_LIST_KEY
+import com.ma.mpv.domain.VideoAspect
+import com.ma.mpv.domain.aspectRatios
+import `is`.xyz.mpv.MPVLib
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,6 +40,46 @@ class PlayerViewModel(
 
     private val _controlsShown = MutableStateFlow(true)
     val controlsShown: StateFlow<Boolean> = _controlsShown.asStateFlow()
+
+    private val _currentAspect = MutableStateFlow(VideoAspect.Original)
+    val currentAspect: StateFlow<VideoAspect> = _currentAspect.asStateFlow()
+
+    private var aspectRatioIndex = 0
+
+    fun cycleAspectRatio(screenAspectRatio: Double) {
+        aspectRatioIndex = (aspectRatioIndex + 1) % aspectRatios.size
+        val newAspect = aspectRatios[aspectRatioIndex]
+        _currentAspect.value = newAspect
+        changeVideoAspect(newAspect, screenAspectRatio)
+    }
+
+    private fun changeVideoAspect(aspect: VideoAspect, screenAspectRatio: Double) {
+        var ratio = -1.0
+        var pan: Double
+        when (aspect) {
+            VideoAspect.Crop -> {
+                pan = 1.0
+                MPVLib.setPropertyDouble("video-zoom", 0.0)
+            }
+
+            VideoAspect.Fit -> {
+                pan = 0.0
+                MPVLib.setPropertyDouble("panscan", 0.0)
+            }
+
+            VideoAspect.Stretch -> {
+                ratio = screenAspectRatio
+                pan = 0.0
+            }
+
+            VideoAspect.Original -> {
+                ratio = 0.0
+                pan = 0.0
+            }
+        }
+        MPVLib.setPropertyDouble("panscan", pan)
+        MPVLib.setPropertyDouble("video-aspect-override", ratio)
+    }
 
     fun showControls() = _controlsShown.update { true }
     fun hideControls() = _controlsShown.update { false }

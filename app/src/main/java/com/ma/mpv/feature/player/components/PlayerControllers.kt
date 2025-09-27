@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ma.mpv.common.ui.theme.Black
+import com.ma.mpv.domain.VideoAspect
 
 @Composable
 fun PlayerControllers(
@@ -34,13 +35,17 @@ fun PlayerControllers(
     onNext: () -> Unit,
     currentVideo: String?,
     onBack: () -> Unit,
-    onRotationClick: () -> Unit
+    onRotationClick: () -> Unit,
+    onAspectRatioClick: () -> Unit,
+    aspectRatio: VideoAspect,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .clickable { onToggleControls() }
     ) {
+        AspectRatioOverlay(aspectRatio = aspectRatio)
+
         AnimatedVisibility(
             visible = controlsShown,
             enter = fadeIn(animationSpec = tween(200)),
@@ -81,11 +86,14 @@ fun PlayerControllers(
                         onSeekTo = onSeekTo,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    PlaybackButtons(
+                    BottomControls(
                         isPlaying = isPlaying,
                         onPlayPauseToggle = onPlayPauseToggle,
                         onPrevious = onPrevious,
-                        onNext = onNext
+                        onNext = onNext,
+                        onAspectRatioClick = onAspectRatioClick,
+                        onLockClick = {},
+                        aspectRatio = aspectRatio
                     )
                 }
             }
