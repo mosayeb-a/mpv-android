@@ -3,11 +3,11 @@ package com.ma.mpv.feature.player.components
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.VolumeMute
 import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.ScreenRotation
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ma.mpv.common.ui.theme.Black
 import java.util.Locale
 
 @Composable
@@ -24,6 +25,7 @@ fun PlayerActions(
     onMuteClick: () -> Unit,
     onSpeedClick: () -> Unit,
     speed: Float,
+    isMuted: Boolean
 ) {
     LazyRow(
         modifier = modifier
@@ -33,13 +35,15 @@ fun PlayerActions(
                 icon = {
                     Icon(
                         modifier = Modifier.size(20.dp),
-                        imageVector = Icons.AutoMirrored.Rounded.VolumeMute,
-                        contentDescription = "Mute",
-                        tint = Color.White
+                        imageVector = Icons.AutoMirrored.Rounded.VolumeOff,
+                        contentDescription = if (isMuted) "Unmute" else "Mute",
+                        tint = Color.White,
                     )
                 },
                 label = "Mute",
-                onClick = onMuteClick
+                onClick = onMuteClick,
+                color = if (isMuted) MaterialTheme.colorScheme.primary.copy(alpha = .6f) else
+                    Black.copy(alpha = 0.75f)
             )
         }
 

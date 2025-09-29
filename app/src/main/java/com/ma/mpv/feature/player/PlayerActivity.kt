@@ -54,6 +54,7 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 val currentAspect by viewModel.currentAspect.collectAsStateWithLifecycle()
                 val isLocked by viewModel.isLocked.collectAsStateWithLifecycle()
                 val currentSpeed by viewModel.playbackSpeed.collectAsStateWithLifecycle()
+                val isMuted by viewModel.isMuted.collectAsStateWithLifecycle()
 
                 LaunchedEffect(controlsShown) {
                     val insetsController =
@@ -105,7 +106,9 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                         viewModel.updatePlaybackSpeed(speed)
                     },
                     currentSpeed = currentSpeed,
-                    aspectRatio = currentAspect
+                    aspectRatio = currentAspect,
+                    isMuted = isMuted,
+                    onMuteClick = { viewModel.toggleMute() }
                 )
             }
         }
@@ -144,6 +147,7 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
             "pause" -> viewModel.updatePlayingState(!value)
             "paused-for-cache" -> viewModel.updateLoadingState(value)
             "seeking" -> viewModel.updateLoadingState(value)
+            "mute" -> viewModel.setMute(value)
         }
     }
 

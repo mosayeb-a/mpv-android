@@ -54,13 +54,6 @@ fun ContentResolver.observe(uri: Uri): Flow<Boolean> = callbackFlow {
 }
 
 @SuppressLint("DefaultLocale")
-fun formatDuration(durationMs: Long): String {
-    val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMs)
-    val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMs) % 60
-    return String.format("%02d:%02d", minutes, seconds)
-}
-
-@SuppressLint("DefaultLocale")
 fun formatFileSize(sizeBytes: Long): String {
     val kb = sizeBytes / 1024.0
     val mb = kb / 1024.0

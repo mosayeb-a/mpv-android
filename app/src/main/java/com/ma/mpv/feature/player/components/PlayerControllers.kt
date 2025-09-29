@@ -50,6 +50,8 @@ fun PlayerControllers(
     onSpeedChange: (Float) -> Unit,
     currentSpeed: Float = 1.0f,
     aspectRatio: VideoAspect,
+    isMuted: Boolean,
+    onMuteClick: () -> Unit,
 ) {
     var showLock by remember { mutableStateOf(isLocked) }
     var showSpeedOverlay by remember { mutableStateOf(false) }
@@ -114,9 +116,10 @@ fun PlayerControllers(
 
                     PlayerActions(
                         onRotationClick = onRotationClick,
-                        onMuteClick = {},
+                        onMuteClick = onMuteClick,
                         onSpeedClick = { showSpeedOverlay = true },
-                        speed = currentSpeed
+                        speed = currentSpeed,
+                        isMuted = isMuted
                     )
                 }
             }

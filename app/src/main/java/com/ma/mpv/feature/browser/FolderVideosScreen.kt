@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ma.mpv.common.formatDuration
 import com.ma.mpv.common.formatFileSize
 import com.ma.mpv.common.rippleClickable
 import com.ma.mpv.common.ui.AppHorizontalDivider
@@ -27,6 +26,7 @@ import com.ma.mpv.common.ui.Appbar
 import com.ma.mpv.common.ui.AsyncThumbImage
 import com.ma.mpv.domain.Video
 import com.ma.mpv.domain.VideoFolder
+import `is`.xyz.mpv.Utils.prettyTime
 
 
 @Composable
@@ -77,7 +77,7 @@ fun FolderVideosScreen(
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = formatDuration(video.duration) + " • " + formatFileSize(video.size),
+                            text = prettyTime((video.duration / 1000).toInt()) + " • " + formatFileSize(video.size),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 12.sp

@@ -26,7 +26,8 @@ fun ActionButton(
     icon: @Composable () -> Unit,
     label: String,
     onClick: () -> Unit,
-    showLabel: Boolean = false
+    showLabel: Boolean = false,
+    color: Color = Black.copy(alpha = 0.75f)
 ) {
     Column(
         modifier = Modifier
@@ -37,7 +38,7 @@ fun ActionButton(
             modifier = Modifier
                 .size(42.dp)
                 .clip(CircleShape)
-                .background(Black.copy(alpha = 0.75f))
+                .background(color)
                 .clickable { onClick() },
             contentAlignment = Alignment.Center
         ) {

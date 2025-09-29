@@ -52,6 +52,16 @@ class PlayerViewModel(
 
     private var aspectRatioIndex = 0
 
+    private val _isMuted = MutableStateFlow(false)
+    val isMuted: StateFlow<Boolean> = _isMuted.asStateFlow()
+
+    fun toggleMute() {
+        _isMuted.update { !it }
+        MPVLib.setPropertyBoolean("mute", _isMuted.value)
+    }
+
+    fun setMute(value: Boolean) { _isMuted.value = value }
+
     fun cycleAspectRatio(screenAspectRatio: Double) {
         aspectRatioIndex = (aspectRatioIndex + 1) % aspectRatios.size
         val newAspect = aspectRatios[aspectRatioIndex]
