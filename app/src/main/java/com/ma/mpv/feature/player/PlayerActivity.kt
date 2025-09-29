@@ -22,6 +22,7 @@ import com.ma.mpv.databinding.PlayerLayoutBinding
 import com.ma.mpv.feature.player.components.PlayerControllers
 import `is`.xyz.mpv.MPVLib
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.text.toLong
 
 class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
     private val binding by lazy { PlayerLayoutBinding.inflate(layoutInflater) }
@@ -55,6 +56,8 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                 val isLocked by viewModel.isLocked.collectAsStateWithLifecycle()
                 val currentSpeed by viewModel.playbackSpeed.collectAsStateWithLifecycle()
                 val isMuted by viewModel.isMuted.collectAsStateWithLifecycle()
+                val doubleTapSeekAmount by viewModel.doubleTapSeekAmount.collectAsStateWithLifecycle()
+                val isSeekingForwards by viewModel.isSeekingForwards.collectAsStateWithLifecycle()
 
                 LaunchedEffect(controlsShown) {
                     val insetsController =
@@ -111,7 +114,19 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     onMuteClick = { viewModel.toggleMute() },
                     onScreenshotClick = {
                         viewModel.takeScreenshot()
-                    }
+                    },
+                    doubleTapSeekAmount = doubleTapSeekAmount,
+                    isSeekingForwards = isSeekingForwards,
+                    onLeftDoubleTap = {
+                        if (viewModel.isSeekingForwards.value) viewModel.updateSeekAmount(0)
+                        viewModel.leftSeek()
+                    },
+                    onRightDoubleTap = {
+                        if (!viewModel.isSeekingForwards.value) viewModel.updateSeekAmount(0)
+                        viewModel.rightSeek()
+                    },
+                    onCenterDoubleTap = { togglePlayPause() },
+                    onUpdateSeekAmount = viewModel::updateSeekAmount
                 )
             }
         }

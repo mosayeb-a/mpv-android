@@ -4,6 +4,7 @@ import android.os.Environment
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ma.mpv.common.DOUBLE_TAP_SEEK_DURATION
 import com.ma.mpv.common.START_INDEX_KEY
 import com.ma.mpv.common.VIDEO_LIST_KEY
 import com.ma.mpv.domain.VideoAspect
@@ -64,6 +65,41 @@ class PlayerViewModel(
     private val _isMuted = MutableStateFlow(false)
     val isMuted: StateFlow<Boolean> = _isMuted.asStateFlow()
 
+    private val _doubleTapSeekAmount = MutableStateFlow(0)
+    val doubleTapSeekAmount: StateFlow<Int> = _doubleTapSeekAmount.asStateFlow()
+
+    private val _isSeekingForwards = MutableStateFlow(false)
+    val isSeekingForwards: StateFlow<Boolean> = _isSeekingForwards.asStateFlow()
+
+    fun updateSeekAmount(amount: Int) {
+        _doubleTapSeekAmount.update { amount }
+    }
+
+    fun leftSeek() {
+        val pos = (position.value / 1000).toInt()
+        if (pos > 0) {
+            _doubleTapSeekAmount.update { it - DOUBLE_TAP_SEEK_DURATION }
+            _isSeekingForwards.update { false }
+            seekBy(-DOUBLE_TAP_SEEK_DURATION)
+        }
+    }
+
+    fun rightSeek() {
+        val pos = (position.value / 1000).toInt()
+        val dur = (duration.value / 1000).toInt()
+        if (pos < dur) {
+            _doubleTapSeekAmount.update { it + DOUBLE_TAP_SEEK_DURATION }
+            _isSeekingForwards.update { true }
+            seekBy(DOUBLE_TAP_SEEK_DURATION)
+        }
+    }
+
+    private fun seekBy(offset: Int) {
+        val currentPosSeconds = (position.value / 1000).toInt() + offset
+        val newPositionMs = currentPosSeconds.toLong() * 1000
+        MPVLib.setPropertyDouble("time-pos", currentPosSeconds.toDouble())
+        updatePosition(newPositionMs)
+    }
 
     fun takeScreenshot() {
         viewModelScope.launch(Dispatchers.IO) {
