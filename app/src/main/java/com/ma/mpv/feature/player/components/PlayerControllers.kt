@@ -52,6 +52,7 @@ fun PlayerControllers(
     aspectRatio: VideoAspect,
     isMuted: Boolean,
     onMuteClick: () -> Unit,
+    onScreenshotClick: () -> Unit
 ) {
     var showLock by remember { mutableStateOf(isLocked) }
     var showSpeedOverlay by remember { mutableStateOf(false) }
@@ -119,7 +120,8 @@ fun PlayerControllers(
                         onMuteClick = onMuteClick,
                         onSpeedClick = { showSpeedOverlay = true },
                         speed = currentSpeed,
-                        isMuted = isMuted
+                        isMuted = isMuted,
+                        onScreenshotClick = onScreenshotClick,
                     )
                 }
             }

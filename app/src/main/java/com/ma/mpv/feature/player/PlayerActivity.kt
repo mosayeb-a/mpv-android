@@ -108,7 +108,10 @@ class PlayerActivity : AppCompatActivity(), MPVLib.EventObserver {
                     currentSpeed = currentSpeed,
                     aspectRatio = currentAspect,
                     isMuted = isMuted,
-                    onMuteClick = { viewModel.toggleMute() }
+                    onMuteClick = { viewModel.toggleMute() },
+                    onScreenshotClick = {
+                        viewModel.takeScreenshot()
+                    }
                 )
             }
         }

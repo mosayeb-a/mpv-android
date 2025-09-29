@@ -25,7 +25,8 @@ fun PlayerActions(
     onMuteClick: () -> Unit,
     onSpeedClick: () -> Unit,
     speed: Float,
-    isMuted: Boolean
+    isMuted: Boolean,
+    onScreenshotClick: () -> Unit,
 ) {
     LazyRow(
         modifier = modifier
@@ -58,7 +59,7 @@ fun PlayerActions(
                     )
                 },
                 label = "Screenshot",
-                onClick = { }
+                onClick = onScreenshotClick
             )
         }
 

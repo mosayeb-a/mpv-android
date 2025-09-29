@@ -1,16 +1,25 @@
 package com.ma.mpv.feature.player
 
+import android.os.Environment
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ma.mpv.common.START_INDEX_KEY
 import com.ma.mpv.common.VIDEO_LIST_KEY
 import com.ma.mpv.domain.VideoAspect
 import com.ma.mpv.domain.aspectRatios
 import `is`.xyz.mpv.MPVLib
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class PlayerViewModel(
     savedStateHandle: SavedStateHandle
@@ -55,12 +64,36 @@ class PlayerViewModel(
     private val _isMuted = MutableStateFlow(false)
     val isMuted: StateFlow<Boolean> = _isMuted.asStateFlow()
 
+
+    fun takeScreenshot() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val screenshotDir = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                "mpv/screenshots"
+            )
+            screenshotDir.mkdirs()
+
+            val date = SimpleDateFormat("yyyy_MM_dd", Locale.getDefault()).format(Date())
+            val filename = "${screenshotDir.path}/mpv-shot-$date.png"
+            try {
+                withContext(Dispatchers.Default) {
+                    MPVLib.command(arrayOf("screenshot-to-file", filename, "video"))
+                }
+            } catch (e: Exception) {
+                println("failed to save screenshot: $e")
+            }
+        }
+    }
+
+
     fun toggleMute() {
         _isMuted.update { !it }
         MPVLib.setPropertyBoolean("mute", _isMuted.value)
     }
 
-    fun setMute(value: Boolean) { _isMuted.value = value }
+    fun setMute(value: Boolean) {
+        _isMuted.value = value
+    }
 
     fun cycleAspectRatio(screenAspectRatio: Double) {
         aspectRatioIndex = (aspectRatioIndex + 1) % aspectRatios.size
